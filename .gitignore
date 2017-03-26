@@ -1,0 +1,10 @@
+target
+*.class
+
+*.impl
+*.ipr
+*.iws
+.idea
+out
+
+.DS_Store
