@@ -17,6 +17,11 @@ case class IntLiteral(value: Int) extends Literal[Int]
 case class LongLiteral(value: Long) extends Literal[Long]
 case class FloatLiteral(value: Float) extends Literal[Float]
 case class DoubleLiteral(value: Double) extends Literal[Double]
+case class BooleanLiteral(value: Boolean) extends Literal[Boolean]
+case class StringLiteral(value: String) extends Literal[String]
+case object NoneLiteral extends Literal[Nothing] {
+  def value = throw new IllegalAccessException("Unable to access member 'value'")
+}
 
 // Compound expressions
 case class Binary[A, B, C](operator: String, left: Expression, right: Expression) extends Expression
