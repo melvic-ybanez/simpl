@@ -6,7 +6,7 @@ package com.melvic.simpl
 
 sealed trait Expression
 
-sealed trait Literal[+A] {
+sealed trait Literal[+A] extends Expression {
   def value: A
 }
 
@@ -24,8 +24,8 @@ case object NoneLiteral extends Literal[Nothing] {
 }
 
 // Compound expressions
-case class Binary[A, B, C](operator: String, left: Expression, right: Expression) extends Expression
-case class Unary[A, B](operator: String, operand: Expression) extends Expression
+case class Binary(operator: String, left: Expression, right: Expression) extends Expression
+case class Unary(operator: String, operand: Expression) extends Expression
 
 // Conditionals and Loops
 case class IfElse(condition: Boolean, ifTrue: Expression, ifFalse: Expression) extends Expression
