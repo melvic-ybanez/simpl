@@ -8,12 +8,13 @@ import scala.util.parsing.combinator.syntactical.StandardTokenParsers
   */
 class SimpLParser extends JavaTokenParsers {
   def symbol: Parser[Symbol] = ident ^^ Symbol
+
   def integer: Parser[IntLiteral] = wholeNumber ^^ (x => IntLiteral(x.toInt))
   def long: Parser[LongLiteral] = wholeNumber <~ "[lL]".r ^^ (x => LongLiteral(x.toLong))
   def float: Parser[FloatLiteral] = floatingPointNumber <~ "[fF]".r ^^ (x => FloatLiteral(x.toFloat))
   def double: Parser[DoubleLiteral] = floatingPointNumber ^^ (x => DoubleLiteral(x.toDouble))
+
   def boolean: Parser[BooleanLiteral] = "true|false".r ^^ (x => BooleanLiteral(x.toBoolean))
-  def character: Parser[CharacterLiteral] = "'" ~> ".".r <~ "'" ^^ (c => CharacterLiteral(c.head))
 
   def nil: Parser[ListLiteral] = "Nil" ^^ (_ => NilList)
   def concat: Parser[ListLiteral] = (expression <~ ':') ~ list ^^ {
@@ -21,6 +22,7 @@ class SimpLParser extends JavaTokenParsers {
   }
   def list: Parser[ListLiteral] = nil | concat
 
+  def character: Parser[CharacterLiteral] = "'" ~> ".".r <~ "'" ^^ (c => CharacterLiteral(c.head))
   def string: Parser[ListLiteral] = stringLiteral ^^ { str =>
     val text = str.tail.init
     text.reverse.foldLeft[ListLiteral](NilList)((acc, c) => ConcatList(CharacterLiteral(c), acc))
