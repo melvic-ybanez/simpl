@@ -18,10 +18,13 @@ case class LongLiteral(value: Long) extends Literal[Long]
 case class FloatLiteral(value: Float) extends Literal[Float]
 case class DoubleLiteral(value: Double) extends Literal[Double]
 case class BooleanLiteral(value: Boolean) extends Literal[Boolean]
-case class StringLiteral(value: String) extends Literal[String]
+case class CharacterLiteral(value: Character) extends Literal[Character]
 case object NoneLiteral extends Literal[Nothing] {
   def value = throw new IllegalAccessException("Unable to access member 'value'")
 }
+sealed trait ListLiteral extends Expression
+case object NilList extends ListLiteral
+case class ConcatList(head: Expression, tail: ListLiteral) extends ListLiteral
 
 // Compound expressions
 case class Binary(operator: String, left: Expression, right: Expression) extends Expression

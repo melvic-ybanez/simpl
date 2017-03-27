@@ -13,6 +13,20 @@ class SimpLParser extends JavaTokenParsers {
   def float: Parser[FloatLiteral] = floatingPointNumber <~ "[fF]".r ^^ (x => FloatLiteral(x.toFloat))
   def double: Parser[DoubleLiteral] = floatingPointNumber ^^ (x => DoubleLiteral(x.toDouble))
   def boolean: Parser[BooleanLiteral] = "true|false".r ^^ (x => BooleanLiteral(x.toBoolean))
-  def string: Parser[StringLiteral] = stringLiteral ^^ (str => StringLiteral(str.tail.init))
+  def character: Parser[CharacterLiteral] = "'" ~> ".".r <~ "'" ^^ (c => CharacterLiteral(c.head))
+
+  def nil: Parser[ListLiteral] = "Nil" ^^ (_ => NilList)
+  def concat: Parser[ListLiteral] = (expression <~ ':') ~ list ^^ {
+    case head ~ tail => ConcatList(head, tail)
+  }
+  def list: Parser[ListLiteral] = nil | concat
+
+  def string: Parser[ListLiteral] = stringLiteral ^^ { str =>
+    val text = str.tail.init
+    text.reverse.foldLeft[ListLiteral](NilList)((acc, c) => ConcatList(CharacterLiteral(c), acc))
+  }
+
   def none: Parser[Literal[Nothing]] = "None".r ^^ (str => NoneLiteral)
+  def expression: Parser[Expression] = symbol | integer | long | float | double |
+    boolean | string | none | list ^^ identity
 }
