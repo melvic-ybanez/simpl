@@ -20,7 +20,7 @@ class SimpLParser extends JavaTokenParsers {
   def concat: Parser[ListLiteral] = (expression <~ ':') ~ list ^^ {
     case head ~ tail => ConcatList(head, tail)
   }
-  def list: Parser[ListLiteral] = nil | concat
+  def list: Parser[ListLiteral] = nil | concat | string
 
   def character: Parser[CharacterLiteral] = "'" ~> ".".r <~ "'" ^^ (c => CharacterLiteral(c.head))
   def string: Parser[ListLiteral] = stringLiteral ^^ { str =>
@@ -28,7 +28,15 @@ class SimpLParser extends JavaTokenParsers {
     text.reverse.foldLeft[ListLiteral](NilList)((acc, c) => ConcatList(CharacterLiteral(c), acc))
   }
 
+  def binary: Parser[Expression] = expression ~ "[+-/*%]".r ~ expression ^^ {
+    case operand1 ~ operator ~ operand2 => Binary(operator, operand1, operand2)
+  }
+  def unary: Parser[Expression] = "[+-!]".r ~ expression ^^ {
+    case operator ~ operand => Unary(operator, operand)
+  }
+
   def none: Parser[Literal[Nothing]] = "None".r ^^ (str => NoneLiteral)
+
   def expression: Parser[Expression] = symbol | integer | long | float | double |
     boolean | string | none | list ^^ identity
 }

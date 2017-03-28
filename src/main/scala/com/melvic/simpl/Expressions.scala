@@ -37,7 +37,7 @@ case class Loop(condition: Boolean, body: Expression) extends Expression
 // Functions and Blocks
 case class Function(name: String, parameters: List[Expression], body: Expression) extends Expression
 case class Block(body: List[Expression]) extends Expression
-case class Call(symbol: Symbol) extends Expression
+case class Call(symbol: Symbol, parameters: List[Expression]) extends Expression
 
 
 
